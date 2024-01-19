@@ -10,7 +10,7 @@ def generate_unqiue_code():
      if Room.objects.filter(code=code).count() == 0:
         break
 
-        return code
+    return code
 
 # Create your models here.
 class Room(models.Model):
