@@ -1,30 +1,146 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import React, { useState, useEffect, useContext } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Grid, Typography, Button, ButtonGroup } from "@mui/material";
+import CreateRoomPage from "./CreateRoomPage";
+import { VotesToSkipContext } from "../contexts/VotesToSkipContext";
+import { GuestCanPauseContext } from "../contexts/GuestsCanPause";
 
-export default function Room() {
+export default function Room({ setRoomCode }) {
   const { roomCode } = useParams();
-  const [votesToSkip, setVotesToSkip] = useState(2);
-  const [guestCanPause, setGuestCanPause] = useState(false);
   const [isHost, setIsHost] = useState(false);
+  const [showSetting, setShowSettings] = useState(false);
+  const [isUpdate, setIsUpdate] = useState(false);
+  const [spotifyAuth, setSpotifyAuth] = useState(false);
+  const { votesToSkip, setVotesToSkip } = useContext(VotesToSkipContext);
+  const { guestCanPause, setGuestCanPause } = useContext(GuestCanPauseContext);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`/api/get-room?code=${roomCode}`)
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        setVotesToSkip(data.votes_to_skip);
-        setGuestCanPause(data.guest_can_pause);
-        setIsHost(data.is_host);
-      });
-  });
+    const fetchData = async () => {
+      const response = await fetch(`/api/get-room?code=${roomCode}`);
+      if (!response.ok) {
+        setRoomCode("");
+        navigate(`/`);
+        return;
+      }
+      const data = await response.json();
+      setVotesToSkip(data.votes_to_skip);
+      setGuestCanPause(data.guest_can_pause);
+      setIsHost(data.is_host);
+
+      if (data.is_host) {
+        await authSpotify();
+      }
+    };
+
+    fetchData();
+  }, [roomCode, navigate, setRoomCode, setVotesToSkip, setGuestCanPause]);
+
+  const authSpotify = async () => {
+    try {
+      const response = await fetch("/spotify/is-authenticated");
+      const data = await response.json();
+      setSpotifyAuth(data.status);
+
+      if (!data.status) {
+        const authUrlResponse = await fetch("/spotify/get-auth-url");
+        const authUrlData = await authUrlResponse.json();
+        window.location.replace(authUrlData.url);
+      }
+    } catch (error) {
+      console.error("Error authenticating with Spotify:", error);
+    }
+  };
+
+  function leaveButtonPressed() {
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    };
+    fetch("/api/leave-room", requestOptions).then((_response) => {
+      setRoomCode("");
+      navigate(`/`);
+    });
+  }
+
+  function settingsPage() {
+    return (
+      <Grid container spacing={1}>
+        <Grid item xs={12} align="center">
+          <CreateRoomPage isUpdate={isUpdate} roomCode={roomCode} />
+        </Grid>
+        <Grid item xs={12} align="center">
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => {
+              setShowSettings(false);
+              setIsUpdate(false);
+            }}
+          >
+            Close
+          </Button>
+        </Grid>
+      </Grid>
+    );
+  }
+
+  function SettingsButton() {
+    return (
+      <Grid item xs={12} align="center">
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            setShowSettings(true);
+            setIsUpdate(true);
+          }}
+        >
+          Settings
+        </Button>
+      </Grid>
+    );
+  }
 
   return (
-    <div>
-      <h3>{roomCode}</h3>
-      <p>Votes: {votesToSkip}</p>
-      <p>Guest Can Pause: {guestCanPause.toString()}</p>
-      <p>Host: {isHost.toString()}</p>
-    </div>
+    <Grid container spacing={1}>
+      {showSetting ? (
+        settingsPage()
+      ) : (
+        <>
+          <Grid item xs={12} align="center">
+            <Typography variant="h4" component="h4">
+              Code: {roomCode}
+            </Typography>
+          </Grid>
+          <Grid item xs={12} align="center">
+            <Typography variant="h6" component="h6">
+              votes: {votesToSkip}
+            </Typography>
+          </Grid>
+          <Grid item xs={12} align="center">
+            <Typography variant="h6" component="h6">
+              Guest Can Pause: {guestCanPause.toString()}
+            </Typography>
+          </Grid>
+          <Grid item xs={12} align="center">
+            <Typography variant="h6" component="h6">
+              Host: {isHost.toString()}
+            </Typography>
+          </Grid>
+          {isHost && SettingsButton()}
+          <Grid item xs={12} align="center">
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={leaveButtonPressed}
+            >
+              Leave Room
+            </Button>
+          </Grid>
+        </>
+      )}
+    </Grid>
   );
 }

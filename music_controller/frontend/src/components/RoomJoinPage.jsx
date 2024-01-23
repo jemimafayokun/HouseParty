@@ -27,7 +27,7 @@ export default function RoomJoinPage() {
         }
       })
       .then((data) => {
-        navigate(`/room/${roomCode}`);
+        navigate(`/room/${data.code}`);
       })
       .catch((error) => {
         setError(error.message);

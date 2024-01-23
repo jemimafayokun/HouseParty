@@ -1,20 +1,16 @@
-import React, { Component } from "react";
-import { createRoot } from "react-dom/client"
+import React from "react";
+import { createRoot } from "react-dom/client";
 import HomePage from "./HomePage";
+import { GuestCanPauseProvider } from "../contexts/GuestsCanPause";
+import { VotesToSkipProvider } from "../contexts/VotesToSkipContext";
 
-export default class App extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    return (
-      <div className="center">
-        <HomePage />
-      </div>
-    );
-  }
-}
+const App = () => {
+  return (
+    <div className="center">
+      <HomePage />
+    </div>
+  );
+};
 
 const appDiv = document.getElementById("app");
 const root = createRoot(appDiv);
