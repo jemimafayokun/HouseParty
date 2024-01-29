@@ -1,3 +1,4 @@
-web: gunicorn music_controller.HOUSEPARTY.wsgi
+web: bin/start
+
 
 
