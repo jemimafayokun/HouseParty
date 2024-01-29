@@ -9,8 +9,11 @@ Follow these steps to run the HouseParty application on your local machine.
 Make sure you have the following installed on your machine:
 
 Python
+
 Django
+
 Node.js
+
 npm (Node Package Manager)
 
 ## Installation
