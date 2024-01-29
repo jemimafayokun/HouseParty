@@ -73,7 +73,6 @@ export default function Room({ setRoomCode }) {
       })
       .then((data) => {
         setSong(data);
-        console.log(data)
       });
   }
 
@@ -128,7 +127,6 @@ export default function Room({ setRoomCode }) {
   }
 
   return (
-
     <Grid container spacing={1}>
       {showSetting ? (
         settingsPage()
@@ -139,7 +137,7 @@ export default function Room({ setRoomCode }) {
               Code: {roomCode}
             </Typography>
           </Grid>
-         <MusicPlayer song={song}/>
+          <MusicPlayer song={song} setSong={setSong} />
           {isHost && SettingsButton()}
           <Grid item xs={12} align="center">
             <Button
