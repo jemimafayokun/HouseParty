@@ -1,2 +1,3 @@
-web: gunicorn HOUSEPARTY.api.wsgi
+web: gunicorn music_controller.HOUSEPARTY.wsgi
+
 
