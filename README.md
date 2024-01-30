@@ -1,6 +1,9 @@
 # HouseParty Application
 HouseParty is a music control application that allows the host of a party to provide permissions to friends who join the room. Users can play, pause, and skip songs based on the number of votes. The host can create a room, set initial permissions, and update play/pause permissions and the number of votes to skip in the room settings.
 
+## Video Demo
+<iframe width="560" height="315" src="https://www.youtube.com/embed/UvDX3srAN_8?si=M2KPdGbn8K-s6KuT" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
 ## Getting Started
 
 Follow these steps to run the HouseParty application on your local machine.
