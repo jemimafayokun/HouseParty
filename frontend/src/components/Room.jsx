@@ -26,6 +26,7 @@ export default function Room({ setRoomCode }) {
         navigate(`/`);
         return;
       }
+      
       const data = await response.json();
       setVotesToSkip(data.votes_to_skip);
       setGuestCanPause(data.guest_can_pause);

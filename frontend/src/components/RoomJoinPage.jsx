@@ -23,11 +23,10 @@ export default function RoomJoinPage() {
     fetch("/api/join-room", requestOptions)
       .then((response) => {
         if (response.ok) {
-          return response.json();
+          navigate(`/room/${roomCode}`);
+        } else {
+          setError({ message: "Room not found" });
         }
-      })
-      .then((data) => {
-        navigate(`/room/${data.code}`);
       })
       .catch((error) => {
         setError(error.message);
